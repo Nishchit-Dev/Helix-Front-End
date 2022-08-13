@@ -1,9 +1,12 @@
+import { config } from './config'
+
 const axios = require('axios').default
 
 let server_URL = 'http://localhost:4545/'
 
 export const Login = async (data)=>{
-    return axios.post(server_URL+'user/login',{
+
+    return axios.post(config.Development.serverURL+'user/login',{
         Email:data.Email,
         Password:data.Password
     }).then(res=>{

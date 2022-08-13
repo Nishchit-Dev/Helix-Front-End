@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ContainerLowPadding,
   Container,
@@ -11,32 +12,54 @@ import {
   Title,
   ContainerCenter,
 } from "../General_Styled/General.style";
-import {Login} from "../Request/LoginReq";
+import Header from "../header/header";
+import { Login } from "../Request/LoginReq";
 
 const Home = () => {
   const [Email, setEmail] = useState("");
   const [Password, setPasswrod] = useState("");
+  const navigator = useNavigate();
 
   useEffect(() => {
     console.log(Email);
   }, [Email]);
 
-
-  const handleSubmit = (e)=>{
+  const handleSubmit = (e) => {
     e.preventDefault();
-    let data = {
-        Email:Email,
-        Password:Password
-    }
-    Login(data).then(res=>{
-        console.log("Logged in")
-    }).catch(err=>{
-        console.log(err)
-    })
+    if (
+      Email &&
+      Password &&
+      Email != null &&
+      Email != "" &&
+      Password != null &&
+      Password != ""
+    ) {
+      let data = {
+        Email: Email,
+        Password: Password,
+      };
 
-  }
+      Login(data)
+        .then((res) => {
+          console.log("Logged in");
+          console.log(res);
+            if(res.Address && res._id){
+                navigator("/user", { state: { data: res } });
+            }else{
+                console.log("Email does not Exist")
+            }
+         
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+        console.log("Fill up the Input field")
+    }
+  };
   return (
     <>
+      <Header />
       <MainContainer>
         <Container>
           <FlexRow>
@@ -64,10 +87,10 @@ const Home = () => {
                   }}
                 ></Input>
               </FlexRow>
-              <FlexRow style={{ alignItems: "flex-end",marginTop:"25px"}}>
-                <LoginBtn type="submit" value={"Login"}/>
+              <FlexRow style={{ alignItems: "flex-end", marginTop: "25px" }}>
+                <LoginBtn type="submit" value={"Login"} />
               </FlexRow>
-            </form >
+            </form>
           </FlexRow>
 
           <ContainerLowPadding style={{ marginTop: "10px" }}>

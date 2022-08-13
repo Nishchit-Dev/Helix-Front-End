@@ -12,7 +12,10 @@ import {
   MainContainer,
   Title,
 } from "../General_Styled/General.style";
+import Header from "../header/header";
 import { signup } from "../Request/SignUpReq";
+import joi from 'joi'
+import User from "./User";
 
 const SignUp = () => {
   const [Email, setEmail] = useState("");
@@ -20,16 +23,37 @@ const SignUp = () => {
   const [ConfirmPassword, setConfirmPassword] = useState("");
   const [Username, setUsername] = useState("");
   const navigator = useNavigate();
+
+ 
+
+  const validate = (data)=>{
+    const FormObject = joi.object({
+        Username:joi.string().min(3).required(),
+        Password:joi.string().min(6).required(),
+        Email:joi.string().required().email({tlds:{allow: false}})
+      })
+    return FormObject.validate(data)
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
     let data = { Username: Username, Password: Password, Email: Email };
-    signup(data)
-      .then((res) => {
-        console.log(res);
-      })
-      .then(() => {
-        Navigate();
-      });
+    let validation = validate(data).error
+
+    if(validation){
+    
+        console.log({message:validation.details[0],flag:false}) 
+   
+    }else{
+        signup(data)
+        .then((res) => {
+          console.log(res);
+        })
+        .then(() => {
+          Navigate();
+        });
+    }
+
+   
   };
 
   const Navigate = () => {
@@ -37,6 +61,7 @@ const SignUp = () => {
   };
   return (
     <>
+    <Header/>
       <MainContainer>
         <Container>
           <form onSubmit={handleSubmit}>

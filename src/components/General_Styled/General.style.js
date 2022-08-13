@@ -7,16 +7,26 @@ export const MainContainer = styled.div`
   height: 100vh;
 `;
 
+export const Flex = styled.div`
+  display: flex;
+`;
+export const Nav = styled.a`
+  font-family: "Outfit";
+  font-size: 14px;
+  font-weight: 300;
+  cursor: pointer;
+`;
 export const Container = styled.div`
   height: fit-content;
   margin: auto;
   padding: 30px;
   background: #f4f4f2;
   border-radius: 7px;
+  word-break:break-all;
 `;
 export const ContainerCenter = styled.div`
-  display:flex;
-  justify-content:center;
+  display: flex;
+  justify-content: center;
 `;
 export const ContainerLowPadding = styled.div`
   height: fit-content;
@@ -36,6 +46,11 @@ export const Input = styled.input`
   padding: 6px 6px 6px 10px;
 `;
 
+export const FlexCol = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap:10px;
+`;
 export const FlexRow = styled.div`
   display: flex;
   flex-direction: column;
@@ -65,7 +80,7 @@ export const LoginBtn = styled.input`
   font-weight: 400;
   font-size: 16px;
   padding: 4px 20px;
- 
+  width:fit-content;
   background: #495464;
   color: #f4f4f2;
   border-radius: 3px;
@@ -73,6 +88,5 @@ export const LoginBtn = styled.input`
   cursor: pointer;
   &:hover {
     opacity: 1;
-    
   }
 `;

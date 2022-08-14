@@ -84,6 +84,7 @@ const User = () => {
   };
 
   const sendAsset = () => {
+    setLoader(true)
     console.log("hello");
     let tnxData = {
       _id: useLocationData.state.data._id,
@@ -104,7 +105,7 @@ const User = () => {
               setErr(true)
             }
             setErr(false)
-            setLoader(!loader)
+            setLoader(false)
             console.log(res);
             console.log(useLocationData.state);
 
@@ -211,7 +212,7 @@ const User = () => {
               <LoginBtn type={"submit"} value={"Send"} onClick={sendAsset} />
             </FlexCol>
             {
-              !loader?( <ContainerCenter style={{justifyContent:"flex-end"}}>
+              loader?( <ContainerCenter style={{justifyContent:"flex-end"}}>
               <Container style={{width:"70px",justifyContent:"flex-end"}}>{<LottieLoader />}</Container>
             </ContainerCenter>):null
             }

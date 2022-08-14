@@ -35,31 +35,70 @@ const Tnx = ({ add }) => {
           {data
             ? data.map((ele) => {
                 return (
-                  <Container style={{borderBottom:'1px black solid'}}>
+                  <Container style={{ borderBottom: "1px black solid" }}>
                     <FlexCol>
+                      <FlexRow style={{
+                          padding: "0px",
+                          width: "400px",
+                          justifyContent: "space-between",
+                          alignItems: "baseline",
+                        }}
+                      >
+                        <FlexRow>
+                          <Title style={{ padding: "0px" }}>TnxHash :</Title>
+                          <Nav>{ele.TnxHash}</Nav>
+                        </FlexRow>
+                        <FlexCol style={{
+                            width:"-webkit-fill-available",justifyContent:"space-between"
+                        }}>
+                          <FlexRow>
+                            <Title style={{ padding: "0px" }}> From :</Title>
+                            <Nav>{AddressSubstring(ele.From)}</Nav>
+                          </FlexRow>
+                          <FlexRow>
+                            <Title style={{ padding: "0px" }}>To :</Title>
+                            <Nav>{AddressSubstring(ele.To)}</Nav>
+                          </FlexRow>
+                        </FlexCol>
 
-                    <FlexRow style={{padding:"0px",width:'400px',justifyContent:"space-between",alignItems:"baseline"}}>
-                       
-                      <FlexRow>
-                        <Title style={{padding:"0px"}}> From :</Title>
-                        <Nav>{AddressSubstring(ele.From)}</Nav>
+                        <FlexRow>
+                          <Title style={{ padding: "0px" }}>Value :</Title>
+                          <Nav>{ele.Value + " ETH"}</Nav>
+                        </FlexRow>
                       </FlexRow>
-                      <FlexRow>
-                        <Title style={{padding:"0px"}}>To :</Title>
-                        <Nav>{AddressSubstring(ele.To)}</Nav>
-                      </FlexRow> 
-                      <FlexRow>
-                      <Title style={{padding:"0px"}}>Value :</Title>
-                      <Nav>{(ele.Value)+" ETH"}</Nav>
-                    </FlexRow>
-                    </FlexRow>
-                    <ContainerCenter style={{justifyContent:"center",alignItems:"center"}}>
-                    <Title>{ele.To==Add?<div style={{color:'white',background:"#83BD75",padding:"10px",borderRadius:"5px"}}>Received</div>:<div style={{color:'white',background:"#708ae0",padding:"10px",borderRadius:"5px"}}>Send</div>}</Title>
-                    </ContainerCenter>
+                      <ContainerCenter
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Title>
+                          {ele.To == Add ? (
+                            <div
+                              style={{
+                                color: "white",
+                                background: "#83BD75",
+                                padding: "10px",
+                                borderRadius: "5px",
+                              }}
+                            >
+                              Received
+                            </div>
+                          ) : (
+                            <div
+                              style={{
+                                color: "white",
+                                background: "#708ae0",
+                                padding: "10px",
+                                borderRadius: "5px",
+                              }}
+                            >
+                              Sent
+                            </div>
+                          )}
+                        </Title>
+                      </ContainerCenter>
                     </FlexCol>
-
-
-                   
                   </Container>
                 );
               })

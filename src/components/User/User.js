@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation,useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Container,
   ContainerCenter,
@@ -23,19 +23,25 @@ import { ReqValidate } from "../utility/SendReqValidation";
 import { sendCryptoAsset } from "../Request/sendCrypto";
 import { recoverAddress } from "ethers/lib/utils";
 import Scanner from "./QrScanner";
+import Tnx from "./Transaction";
+import LottieLoader from "./loader";
 const User = () => {
   const useLocationData = useLocation();
   const [balance, setBalance] = useState(0.0);
   const [walletInfo, setWalletInfo] = useState(null);
   const [gas, setGas] = useState(0.0);
   //   setId(data.state.data._id)
-  const [qrFlag, setQrFlag] = useState(true);
-  const [sendFlag, setSendFlag] = useState(true);
+
   const [amount, setAmount] = useState(1);
   const [tot, setTot] = useState(0);
   const [lowBalance, setLowBalance] = useState(false);
-  const [ReciverAddress,setReciverAddress] = useState('')
-  const navigator = useNavigate();
+  const [ReciverAddress, setReciverAddress] = useState("");
+  const [qrFlag, setQrFlag] = useState(true);
+  const [tnxFlag, setTnxFlag] = useState(false);
+  const [sendFlag, setSendFlag] = useState(true);
+  const [loader,setLoader] = useState(false)
+  const [err,setErr]= useState(false)
+
   useEffect(() => {
     setWalletInfo(useLocationData.state.data);
     const call = async () => {
@@ -78,47 +84,51 @@ const User = () => {
   };
 
   const sendAsset = () => {
-
-    console.log("hello")
-    let tnxData= {
-        _id: useLocationData.state.data._id,
-        tnx: {
-          send_account: useLocationData.state.data.Address,
-          to_address: ReciverAddress,
-          send_Token_amount: amount,
-        },
-      }
+    console.log("hello");
+    let tnxData = {
+      _id: useLocationData.state.data._id,
+      tnx: {
+        send_account: useLocationData.state.data.Address,
+        to_address: ReciverAddress,
+        send_Token_amount: amount,
+      },
+    };
 
     ReqValidate(tnxData).then((res) => {
-        console.log(res)
+      console.log(res);
       if (res.flag) {
         sendCryptoAsset(tnxData)
           .then((res) => {
-            console.log(res)
-            console.log(useLocationData.state)
-            
-            setSendFlag(!sendFlag)
+            if(!res.flag){
+              setLoader(false)
+              setErr(true)
+            }
+            setErr(false)
+            setLoader(!loader)
+            console.log(res);
+            console.log(useLocationData.state);
 
-            let timeInterval = setInterval(()=>{
+            setSendFlag(!sendFlag);
 
-                const get = async ()=>{
-                    let Balance =  await FetchBalance(useLocationData.state.data.Address).then(res=>{
-                        console.log(res , balance)
+            let timeInterval = setInterval(() => {
+              const get = async () => {
+                let Balance = await FetchBalance(
+                  useLocationData.state.data.Address
+                ).then((res) => {
+                  console.log(res, balance);
 
-                        if(res != balance ){
-                            setBalance(res)
-                            clearInterval(timeInterval);
-                        }
-                    })
-                }
+                  if (res != balance) {
+                    setBalance(res);
+                    clearInterval(timeInterval);
+                  }
+                });
+              };
 
-                get()
-                  
-                   
-            },5000)
+              get();
+            }, 5000);
           })
           .catch((err) => {
-            console.log(err)
+            console.log(err);
           });
       } else {
       }
@@ -145,7 +155,13 @@ const User = () => {
             </ContainerCenter>{" "}
             <FlexRow>
               <Title>Reciver's Address </Title>
-              <Input placeholder="Reciver's Address" value={ReciverAddress} onChange={(e)=>{setReciverAddress(e.target.value)}} />
+              <Input
+                placeholder="Reciver's Address or ENS"
+                value={ReciverAddress}
+                onChange={(e) => {
+                  setReciverAddress(e.target.value);
+                }}
+              />
             </FlexRow>
             <FlexRow>
               <Title>Amount</Title>
@@ -192,13 +208,18 @@ const User = () => {
                   setSendFlag(!sendFlag);
                 }}
               />
-              <LoginBtn
-                type={"submit"}
-                value={"Send"}
-
-                onClick={sendAsset}
-              />
+              <LoginBtn type={"submit"} value={"Send"} onClick={sendAsset} />
             </FlexCol>
+            {
+              !loader?( <ContainerCenter style={{justifyContent:"flex-end"}}>
+              <Container style={{width:"70px",justifyContent:"flex-end"}}>{<LottieLoader />}</Container>
+            </ContainerCenter>):null
+            }
+            {err?( <ContainerCenter>
+              <Content>tnx Failed
+                </Content>
+                </ContainerCenter>):null}
+           
             {/* </ContainerCenter> */}
           </Container>
         </ContainerCenter>
@@ -207,6 +228,8 @@ const User = () => {
   );
   const sendCrypto = async () => {
     setSendFlag(!sendFlag);
+    setQrFlag(true);
+    setTnxFlag(true);
     let gasFees = await getGasFees();
     setGas(gasFees);
   };
@@ -226,7 +249,9 @@ const User = () => {
               <ContainerCenter>
                 <FlexRow style={{ alignItems: "center" }}>
                   <Nav>Account</Nav>
-                  <Content>{AddressSubstring(useLocationData.state.data.Address)}</Content>
+                  <Content>
+                    {AddressSubstring(useLocationData.state.data.Address)}
+                  </Content>
                 </FlexRow>
               </ContainerCenter>
             </FlexRow>
@@ -245,22 +270,40 @@ const User = () => {
                   type={"submit"}
                   onClick={() => {
                     setQrFlag(!qrFlag);
+                    setSendFlag(true);
+                    setTnxFlag(true);
                   }}
                 />
-                <LoginBtn value={"Send"} type={"submit"} onClick={sendCrypto} />
+                <LoginBtn
+                  value={"Send"}
+                  type={"submit"}
+                  onClick={() => {
+                    sendCrypto();
+                  }}
+                />
+                <LoginBtn
+                  value={"Transaction"}
+                  type={"submit"}
+                  onClick={() => {
+                    setTnxFlag(!tnxFlag);
+                    setSendFlag(true);
+                    setQrFlag(true);
+                  }}
+                />
               </FlexCol>
             </ContainerCenter>
           </Container>
         </ContainerCenter>
       ) : null}
 
-      <ContainerCenter style={{ display: qrDisplay() }}>
+      <ContainerCenter style={{ display: qrDisplay(), marginBottom: "20px" }}>
         <Container>
-         <QRCode value={useLocationData.state.data.Address} size={180} />
+          <QRCode value={useLocationData.state.data.Address} size={180} />
         </Container>
       </ContainerCenter>
-      
+
       {!sendFlag ? send : null}
+      {!tnxFlag ? <Tnx add={useLocationData.state.data.Address} /> : null}
     </>
   );
 };

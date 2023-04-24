@@ -2,7 +2,7 @@ import {ethers} from "ethers"
 import { customSubstring } from "./AddressSubString"
 export const FetchBalance = async(address)=>{
     
-    let provider =  new ethers.providers.InfuraProvider('rinkeby')
+    let provider =  new ethers.providers.InfuraProvider('goerli')
     return await provider.getBalance(address).then(res=>{
         return formatWei(res)
     })

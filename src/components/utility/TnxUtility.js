@@ -2,7 +2,7 @@ import {ethers} from "ethers"
 
 
 export const getGasFees =async ()=>{
-    let provider = new ethers.providers.InfuraProvider('rinkeby')
+    let provider = new ethers.providers.InfuraProvider('goerli')
 
     let gas = await provider.getGasPrice();
     console.log(gas)
